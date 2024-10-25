@@ -28,16 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(201).json({
                 message: "Car added successfully",
-                car: result.insertedId
+                car: { _id: result.insertedId, ...newCar }
             });
         } catch (error) {
-            return res.status(500).json({
-                message: "Faled to add car", error
-            });
+            return res.status(500).json({ message: "Faled to add car", error });
         }
     } else {
-        return res.status(405).json({
-            message: "Method not allowed"
-        });
+        return res.status(405).json({ message: "Method not allowed" });
     }
 }

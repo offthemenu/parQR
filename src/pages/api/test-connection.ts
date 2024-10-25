@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const collections = await db.collections();
       res.status(200).json({ collections });
     } catch (error) {
-      return res.status(500).json({ error: 'Connection failed'});
+      return res.status(500).json({ message: 'Connection failed', error});
     } finally {
       await client.close();
     }
