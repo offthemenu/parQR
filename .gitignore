@@ -30,6 +30,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+parQR-backend/.env
 
 # typescript
 *.tsbuildinfo
