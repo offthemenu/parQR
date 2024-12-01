@@ -78,3 +78,4 @@ app.post("/api/register", async (req: Request, res: Response) => {
     });
   }
 });
+
