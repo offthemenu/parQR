@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import { SERVER_URL } from '@env';
 
 const RegistrationScreen: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -18,7 +19,7 @@ const RegistrationScreen: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://192.168.1.173:5001/api/register", {
+      const response = await fetch(`${SERVER_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     marginTop: 20,
+    justifyContent: 'center'
   },
   resultText: {
     fontSize: 18,
