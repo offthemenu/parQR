@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import crypto from "crypto";
 import User from "./models/User";
+import Car from "./models/Car";
 
 
 dotenv.config();
@@ -35,7 +36,6 @@ app.listen(PORT, () => {
 });
 
 // code for testing routes below
-
 app.post("/api/register", async (req: Request, res: Response) => {
   try {
     const { phoneNumber } = req.body;
@@ -70,6 +70,47 @@ app.post("/api/register", async (req: Request, res: Response) => {
       },
     });
 
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: (error as Error).message,
+    });
+  }
+});
+
+app.post("/api/register-car", async (req: Request, res: Response) => {
+  try {
+    const { ownerId, licensePlate, carModel, carBrand } = req.body;
+
+    // Check if the license plate already exists
+    const existingCar = await Car.findOne({ licensePlate });
+    if (existingCar) {
+      return res.status(400).json({
+        success: false,
+        message: "Car with this license plate already exists.",
+      });
+    }
+
+    // Create a new car document
+    const newCar = new Car({
+      ownerId,
+      licensePlate,
+      carModel,
+      carBrand,
+    });
+
+    const savedCar = await newCar.save();
+
+    res.status(201).json({
+      success: true,
+      data: {
+        carId: savedCar._id,
+        licensePlate: savedCar.licensePlate,
+        carModel: savedCar.carModel,
+        carBrand: savedCar.carBrand,
+      },
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

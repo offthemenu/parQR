@@ -10,6 +10,7 @@ const CarSchema: Schema = new Schema({
   ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   licensePlate: { type: String, required: true, unique: true },
   carModel: { type: String, required: true },
+  carBrand: { type: String, required: true },
 });
 
 export default mongoose.model<ICar>('Car', CarSchema);
