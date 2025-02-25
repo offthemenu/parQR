@@ -4,6 +4,7 @@ export interface ICar extends Document {
   ownerId: mongoose.Types.ObjectId;
   licensePlate: string;
   carModel: string;
+  carBrand: string;
 }
 
 const CarSchema: Schema = new Schema({
