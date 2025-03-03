@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import Car from "../models/Car";
 import User from "../models/User";
+import { userInfo } from "os";
 
 export const carRoutes = express.Router();
 
@@ -40,6 +41,33 @@ carRoutes.post("/register-car", async (req: Request, res: Response) => {
         res.status(201).json({
             success: true,
             data: savedCar,
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+});
+
+carRoutes.get("/get-user-cars", async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.query;
+
+        //Validate Input
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required.",
+            });
+        }
+
+        const userCars = await Car.find({ ownerId: userId });
+
+        res.status(200).json({
+            success: true,
+            data: userCars,
         });
     } catch (error: any) {
         res.status(500).json({

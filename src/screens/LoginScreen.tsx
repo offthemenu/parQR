@@ -5,7 +5,8 @@ import { SERVER_URL } from '@env';
 
 type RootStackParamList = {
     Login: undefined;
-    Dashboard: { userCode: string; qrCodeId: string }; //Navigate with user data
+    Dashboard: { userCode: string; qrCodeId: string };
+    CarRegistration: { userId: string };
 };
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -30,21 +31,36 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                 body: JSON.stringify({ phoneNumber }),
             });
 
-            const data = await response.json();
-
             if (!response.ok) {
-                Alert.alert('Login Failed', data.message);
+                const errorData = await response.json();
+                Alert.alert('Login Failed', errorData.message || 'Something went wrong');
                 return;
             }
+
+            const data = await response.json();
 
             // Store user code and QR Code
             setUserCode(data.data.userCode);
             setQrCodeId(data.data.qrCodeId);
 
-            Alert.alert('Success', "You have successfully logged in");
+            const carResponse = await fetch(`${SERVER_URL}/api/get-user-cars?userId=${data.data.userId}`);
+            if (!carResponse.ok) {
+                Alert.alert('Error', 'Unable to fetch user cars.');
+                return;
+            }
 
-            // Navigate to Dashboard
-            navigation.navigate("Dashboard", { userCode: data.data.userCode, qrCodeId: data.data.qrCodeId });
+            const carData = await carResponse.json();
+
+            if (!carData.success) {
+                Alert.alert("Error", "Unable to check registered cars.");
+                return;
+              }
+
+            if (carData.cars && carData.cars.length === 0) {
+                navigation.replace("CarRegistration", { userId: data.data.userId });
+            } else {
+                navigation.replace("Dashboard", { userCode: data.data.userCode, qrCodeId: data.data.qrCodeId });
+            }
         } catch (error) {
             Alert.alert('Error', 'Unable to connect to the server.');
         }
@@ -62,7 +78,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             />
             <Button title="Login" onPress={handleLogin} />
         </View>
-    )
+    );
 };
 
 const styles = StyleSheet.create({
