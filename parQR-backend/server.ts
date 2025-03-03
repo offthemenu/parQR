@@ -18,6 +18,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 })); // Allow cross-origin requests
 
+console.log("Using MongoDB URI:", MONGODB_URI);
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
